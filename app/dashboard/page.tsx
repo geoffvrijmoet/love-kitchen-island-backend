@@ -16,7 +16,7 @@ export default async function DashboardPage() {
     await shopifyClient.graphql('query { shop { name } }');
   } catch (err) {
     console.error('Shopify connection error:', err);
-    shopifyStatus = 'Error connecting to Shopify';
+    shopifyStatus = 'Error connecting to Shopify: ' + err;
   }
 
   return (
