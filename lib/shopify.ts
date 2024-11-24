@@ -24,7 +24,7 @@ interface ShopifyProduct {
   };
 }
 
-export async function getShopifyProducts() {
+export async function getShopifyProducts(): Promise<{ products: { edges: Array<{ node: ShopifyProduct }> } }> {
   const response = await shopifyClient.graphql(`
     query {
       products(first: 100) {
