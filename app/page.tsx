@@ -2,7 +2,47 @@ import { redirect } from "next/navigation";
 import { auth } from "@clerk/nextjs/server";
 import { shopifyClient } from "@/lib/shopify";
 
-async function getStoreMetrics() {
+interface ShopData {
+  shop: {
+    name: string;
+    email: string;
+    myshopifyDomain: string;
+    productVendors: {
+      edges: Array<{
+        node: string;
+      }>;
+    };
+    products: {
+      edges: Array<{
+        node: {
+          id: string;
+          title: string;
+          totalInventory: number;
+          priceRangeV2: {
+            minVariantPrice: {
+              amount: string;
+            };
+          };
+        };
+      }>;
+    };
+    orders: {
+      edges: Array<{
+        node: {
+          id: string;
+          totalPriceSet: {
+            shopMoney: {
+              amount: string;
+            };
+          };
+          createdAt: string;
+        };
+      }>;
+    };
+  };
+}
+
+async function getStoreMetrics(): Promise<ShopData> {
   const query = `
     query {
       shop {
@@ -45,7 +85,7 @@ async function getStoreMetrics() {
     }
   `;
 
-  return shopifyClient.request(query);
+  return shopifyClient.graphql(query);
 }
 
 export default async function HomePage() {

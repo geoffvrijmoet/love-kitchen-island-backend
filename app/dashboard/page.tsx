@@ -4,17 +4,18 @@ import { DashboardShell } from "@/components/layout/dashboard-shell";
 import { shopifyClient } from "@/lib/shopify";
 
 export default async function DashboardPage() {
-  const { userId } = auth();
+  const session = await auth();
   
-  if (!userId) {
+  if (!session?.userId) {
     redirect("/sign-in");
   }
 
   let shopifyStatus = 'Connected';
   try {
     // Test the connection
-    await shopifyClient.request('query { shop { name } }');
-  } catch (error) {
+    await shopifyClient.graphql('query { shop { name } }');
+  } catch (err) {
+    console.error('Shopify connection error:', err);
     shopifyStatus = 'Error connecting to Shopify';
   }
 
